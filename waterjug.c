@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<malloc.h>
+const int ju1=4,j2=3,req=0;
 struct jugdata
 {
 	int jug1;
@@ -31,7 +32,7 @@ struct node* create_new_node(int x,int y)
 	{
 		n->next[i]=NULL;
 	}
-	printf("%d - %d\n",n->data->jug1,n->data->jug2);
+	//printf("%d - %d\n",n->data->jug1,n->data->jug2);
 	return n;
 }
 struct queuenode* create_new_queuenode(struct node *ptr)
@@ -49,6 +50,7 @@ void insert_in_queue(struct queuenode *q)
 	{
 		rear->link=q;
 		rear=q;
+		printf("here");
 	}
 }
 void display(struct queuenode *s)
@@ -59,19 +61,62 @@ void display(struct queuenode *s)
 		s=s->link;
 	}
 }
+void displaytree(struct node *ss)
+{
+	int a=0;
+	while(ss->next[a]!=NULL)
+	{
+		printf("-----%d - %d ------",ss->next[a]->data->jug1,ss->next[a]->data->jug2);
+		a=a+1;
+	}
+}
+struct node* Fill_Jug1()
+{
+	int i;
+	n=(struct node*)malloc(sizeof(struct node*)*20);
+	n->data=create_new_jugdata(ju1,0);
+	for(i=0;i<20;i++)
+	{
+		n->next[i]=NULL;
+	}
+	return n;
+}
+struct node* Fill_Jug2()
+{
+	int i;
+	n=(struct node*)malloc(sizeof(struct node*)*20);
+	n->data=create_new_jugdata(0,j2);
+	for(i=0;i<20;i++)
+	{
+		n->next[i]=NULL;
+	}
+	return n;
+}
 int main()
 {
-	int a=2,b=3,c;
+	int c,i;
 	start=NULL;
 	rear=NULL;
-	struct node *ptr;
-	struct queuenode *q;
-	for(c=0;c<15;c++)
+	struct node *ptr,*init;
+	struct jugdata *ju;
+	struct queuenode *q,*q1;
+	/*for(c=0;c<5;c++)                 TEST SUCCESS
 	{
 	ptr=create_new_node(c,c);
 	q=create_new_queuenode(ptr);
 	insert_in_queue(q);
 	}
+	display(start);*/ 
+	init=create_new_node(0,0);
+	ptr=Fill_Jug1();
+	init->next[0]=ptr;
+	q=create_new_queuenode(init->next[0]);
+	insert_in_queue(q);
+	ptr=Fill_Jug2();
+	init->next[1]=ptr;
+	displaytree(init);
+	q=create_new_queuenode(init->next[1]);
+	insert_in_queue(q);
 	display(start);
 	return 0;
 }
