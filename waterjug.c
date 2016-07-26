@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<malloc.h>
-const int ju1=4,j2=3,req=0;
+int ju1=4,j2=3,req=0,pj1=0,pj2=0;
 struct jugdata
 {
 	int jug1;
@@ -75,6 +75,8 @@ struct node* Fill_Jug1()
 	int i;
 	n=(struct node*)malloc(sizeof(struct node*)*20);
 	n->data=create_new_jugdata(ju1,0);
+	pj1=ju1;
+	pj2=0;
 	for(i=0;i<20;i++)
 	{
 		n->next[i]=NULL;
@@ -86,11 +88,69 @@ struct node* Fill_Jug2()
 	int i;
 	n=(struct node*)malloc(sizeof(struct node*)*20);
 	n->data=create_new_jugdata(0,j2);
+	pj1=0;
+	pj2=j2;
 	for(i=0;i<20;i++)
 	{
 		n->next[i]=NULL;
 	}
 	return n;
+}
+struct node *TransferFromJug1ToJug2(struct node *p)
+{
+	int temp=j2-pj2;
+	if(pj1>=temp)
+	{
+		pj2=pj2+temp;
+		pj1=pj1-temp;
+		p->data->jug1=pj1;
+		p->data->jug2=pj2;
+	}
+	else
+	{
+		pj2=pj2+pj1;
+		pj1=0;
+		p->data->jug1=pj1;
+		p->data->jug2=pj2;
+	}
+	return p;
+}
+struct node *EmptyJug2(struct node *p)
+{
+	pj2=0;
+	p->data->jug2=0;
+	return p;
+}
+struct node *TransferFromJug2ToJug1()
+{
+	int i,temp=ju1-pj1;
+	if(pj2>=temp)
+	{
+		pj1=pj1+temp;
+		pj2=pj2-temp;
+	}
+	else
+	{
+		pj1=pj1+pj2;
+		pj2=0;
+	}
+	struct node *p=(struct node*)malloc(sizeof(struct node*)*20);
+	p->data=create_new_jugdata(pj1,pj2);
+	for(i=0;i<20;i++)
+	{
+		p->next[i]=NULL;
+	}
+	return p;
+}
+struct node *EmptyJug1(struct node *p)
+{
+	pj1=0;
+	p->data->jug1=0;
+	return p;
+}
+void displaynode(struct node *p)
+{
+	printf("\n\n%d .....%d",p->data->jug1,p->data->jug2);
 }
 int main()
 {
@@ -108,6 +168,8 @@ int main()
 	}
 	display(start);*/ 
 	init=create_new_node(0,0);
+	q=create_new_queuenode(init);
+	insert_in_queue(q);
 	ptr=Fill_Jug1();
 	init->next[0]=ptr;
 	q=create_new_queuenode(init->next[0]);
@@ -116,6 +178,13 @@ int main()
 	init->next[1]=ptr;
 	displaytree(init);
 	q=create_new_queuenode(init->next[1]);
+	insert_in_queue(q);
+	//display(start);
+	init=init->next[1];
+	ptr=TransferFromJug2ToJug1();
+	//displaynode(ptr);
+	init->next[0]=ptr;
+	q=create_new_queuenode(init->next[0]);
 	insert_in_queue(q);
 	display(start);
 	return 0;
