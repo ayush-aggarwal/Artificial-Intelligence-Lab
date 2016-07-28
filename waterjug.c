@@ -32,13 +32,6 @@ struct node* create_new_node(int x,int y)
 		n->next[i]=NULL;
 	return n;
 }
-struct queuenode* create_new_queuenode(struct node *ptr)
-{
-	l=(struct queuenode*) malloc(sizeof(struct queuenode*));
-	l->n1=ptr;
-	l->link=NULL;
-	return l;
-}
 void insert_in_queue(struct queuenode *q)
 {
 	if(start==NULL)
@@ -48,6 +41,13 @@ void insert_in_queue(struct queuenode *q)
 		rear->link=q;
 		rear=q;
 	}
+}
+void create_new_queuenode(struct node *ptr)
+{
+	l=(struct queuenode*) malloc(sizeof(struct queuenode*));
+	l->n1=ptr;
+	l->link=NULL;
+	insert_in_queue(l);
 }
 void display(struct queuenode *s)
 {
@@ -60,29 +60,21 @@ void display(struct queuenode *s)
 
 struct node* Fill_Jug1(struct node *p)
 {
-	int i;
-	n=(struct node*)malloc(sizeof(struct node*)*20);
-	n->data=create_new_jugdata(ju1,p->data->jug2);
+	n=create_new_node(ju1,p->data->jug2);
 	pj1=ju1;
 	pj2=p->data->jug2;
-	for(i=0;i<20;i++)
-		n->next[i]=NULL;
 	return n;
 }
 struct node* Fill_Jug2(struct node *p)
 {
-	int i;
-	n=(struct node*)malloc(sizeof(struct node*)*20);
-	n->data=create_new_jugdata(p->data->jug1,j2);
+	n=create_new_node(p->data->jug1,j2);
 	pj1=p->data->jug1;
 	pj2=j2;
-	for(i=0;i<20;i++)
-		n->next[i]=NULL;
 	return n;
 }
 struct node *TransferFromJug1ToJug2(struct node *p)
 {
-	int i,temp=j2-p->data->jug2;
+	int temp=j2-p->data->jug2;
 	if(p->data->jug1>=temp)
 	{
 		pj2=p->data->jug2+temp;
@@ -93,26 +85,19 @@ struct node *TransferFromJug1ToJug2(struct node *p)
 		pj2=p->data->jug2+p->data->jug1;
 		pj1=0;
 	}
-	n=(struct node*)malloc(sizeof(struct node*)*20);
-	n->data=create_new_jugdata(pj1,pj2);
-	for(i=0;i<20;i++)
-		n->next[i]=NULL;
+	n=create_new_node(pj1,pj2);
 	return n;
 }
 struct node *EmptyJug2(struct node *p)
 {
-	int i;
 	pj1=p->data->jug1;
 	pj2=0;
-	n=(struct node*)malloc(sizeof(struct node*)*20);
-	n->data=create_new_jugdata(pj1,pj2);
-	for(i=0;i<20;i++)
-		n->next[i]=NULL;
+	n=create_new_node(pj1,pj2);
 	return n;
 }
 struct node *TransferFromJug2ToJug1(struct node *p)
 {
-	int i,temp=ju1-p->data->jug1;
+	int temp=ju1-p->data->jug1;
 	if(p->data->jug2>=temp)
 	{
 		pj1=p->data->jug1+temp;
@@ -123,31 +108,22 @@ struct node *TransferFromJug2ToJug1(struct node *p)
 		pj1=p->data->jug1+p->data->jug2;
 		pj2=0;
 	}
-	n=(struct node*)malloc(sizeof(struct node*)*20);
-	n->data=create_new_jugdata(pj1,pj2);
-	for(i=0;i<20;i++)
-		n->next[i]=NULL;
+	n=create_new_node(pj1,pj2);
 	return n;
 }
 struct node *EmptyJug1(struct node *p)
 {
-	int i;
 	pj1=0;
 	pj2=p->data->jug2;
-	n=(struct node*)malloc(sizeof(struct node*)*20);
-	n->data=create_new_jugdata(pj1,pj2);
-	for(i=0;i<20;i++)
-		n->next[i]=NULL;
+	n=create_new_node(pj1,pj2);
 	return n;
 }
 int main()
 {
-	int c,i,ctr=0;
+	int c,i;
 	start=NULL;
 	rear=NULL;
 	struct node *ptr,*init,*root;
-	struct jugdata *ju;
-	struct queuenode *q;
 	printf("Jug1:- ");
 	scanf("%d",&ju1);
 	printf("Jug2:- ");
@@ -156,26 +132,21 @@ int main()
 	scanf("%d",&req);
 	init=create_new_node(0,0);
 	root=create_new_node(0,0);
-	q=create_new_queuenode(init);
-	insert_in_queue(q);
+	create_new_queuenode(init);
 	ptr=Fill_Jug1(init);
 	init->next[0]=ptr;
-	q=create_new_queuenode(init->next[0]);
-	insert_in_queue(q);
+	create_new_queuenode(init->next[0]);
 	ptr=Fill_Jug2(init);
 	init->next[1]=ptr;
-	q=create_new_queuenode(init->next[1]);
-	insert_in_queue(q);
+	create_new_queuenode(init->next[1]);
 	root=init;
 	init=root->next[0];
 	ptr=TransferFromJug1ToJug2(init);
 	init->next[0]=ptr;
-	q=create_new_queuenode(init->next[0]);
-	insert_in_queue(q);
+	create_new_queuenode(init->next[0]);
 	ptr=Fill_Jug2(init);
 	init->next[1]=ptr;
-	q=create_new_queuenode(init->next[1]);
-	insert_in_queue(q);
+	create_new_queuenode(init->next[1]);
 	init=init->next[0];
 	while(1)
 	{
@@ -190,20 +161,17 @@ int main()
 		else
 		{
 			init->next[0]=ptr;
-			q=create_new_queuenode(init->next[0]);
-			insert_in_queue(q);
+			create_new_queuenode(init->next[0]);
 			init=init->next[0];
 		}
 	}
 	init=root->next[1];  //..................
 	ptr=TransferFromJug2ToJug1(init);
 	init->next[0]=ptr;
-	q=create_new_queuenode(init->next[0]);
-	insert_in_queue(q);
+	create_new_queuenode(init->next[0]);
 	ptr=Fill_Jug1(init);
 	init->next[1]=ptr;
-	q=create_new_queuenode(init->next[1]);
-	insert_in_queue(q);
+	create_new_queuenode(init->next[1]);
 	init=init->next[0];	
 	while(1)
 	{
@@ -218,8 +186,7 @@ int main()
 		else
 		{
 		init->next[0]=ptr;
-		q=create_new_queuenode(init->next[0]);
-		insert_in_queue(q);
+		create_new_queuenode(init->next[0]);
 		init=init->next[0];
 		}
 	}
