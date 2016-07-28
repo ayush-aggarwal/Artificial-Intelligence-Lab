@@ -29,10 +29,7 @@ struct node* create_new_node(int x,int y)
 	n=(struct node*)malloc(sizeof(struct node*)*20);
 	n->data=create_new_jugdata(x,y);
 	for(i=0;i<20;i++)
-	{
 		n->next[i]=NULL;
-	}
-	//printf("%d - %d\n",n->data->jug1,n->data->jug2);
 	return n;
 }
 struct queuenode* create_new_queuenode(struct node *ptr)
@@ -60,15 +57,7 @@ void display(struct queuenode *s)
 		s=s->link;
 	}
 }
-void displaytree(struct node *ss)
-{
-	int a=0;
-	while(ss->next[a]!=NULL)
-	{
-		printf("-----%d - %d ------",ss->next[a]->data->jug1,ss->next[a]->data->jug2);
-		a=a+1;
-	}
-}
+
 struct node* Fill_Jug1(struct node *p)
 {
 	int i;
@@ -77,9 +66,7 @@ struct node* Fill_Jug1(struct node *p)
 	pj1=ju1;
 	pj2=p->data->jug2;
 	for(i=0;i<20;i++)
-	{
 		n->next[i]=NULL;
-	}
 	return n;
 }
 struct node* Fill_Jug2(struct node *p)
@@ -90,55 +77,56 @@ struct node* Fill_Jug2(struct node *p)
 	pj1=p->data->jug1;
 	pj2=j2;
 	for(i=0;i<20;i++)
-	{
 		n->next[i]=NULL;
-	}
 	return n;
 }
 struct node *TransferFromJug1ToJug2(struct node *p)
 {
-	int temp=j2-pj2;
-	if(pj1>=temp)
+	int i,temp=j2-p->data->jug2;
+	if(p->data->jug1>=temp)
 	{
-		pj2=pj2+temp;
-		pj1=pj1-temp;
-		p->data->jug1=pj1;
-		p->data->jug2=pj2;
+		pj2=p->data->jug2+temp;
+		pj1=p->data->jug1-temp;
 	}
 	else
 	{
-		pj2=pj2+pj1;
+		pj2=p->data->jug2+p->data->jug1;
 		pj1=0;
-		p->data->jug1=pj1;
-		p->data->jug2=pj2;
 	}
-	return p;
+	n=(struct node*)malloc(sizeof(struct node*)*20);
+	n->data=create_new_jugdata(pj1,pj2);
+	for(i=0;i<20;i++)
+		n->next[i]=NULL;
+	return n;
 }
 struct node *EmptyJug2(struct node *p)
 {
+	int i;
+	pj1=p->data->jug1;
 	pj2=0;
-	p->data->jug2=0;
-	return p;
+	n=(struct node*)malloc(sizeof(struct node*)*20);
+	n->data=create_new_jugdata(pj1,pj2);
+	for(i=0;i<20;i++)
+		n->next[i]=NULL;
+	return n;
 }
-struct node *TransferFromJug2ToJug1()
+struct node *TransferFromJug2ToJug1(struct node *p)
 {
-	int i,temp=ju1-pj1;
-	if(pj2>=temp)
+	int i,temp=ju1-p->data->jug1;
+	if(p->data->jug2>=temp)
 	{
-		pj1=pj1+temp;
-		pj2=pj2-temp;
+		pj1=p->data->jug1+temp;
+		pj2=p->data->jug2-temp;
 	}
 	else
 	{
-		pj1=pj1+pj2;
+		pj1=p->data->jug1+p->data->jug2;
 		pj2=0;
 	}
 	n=(struct node*)malloc(sizeof(struct node*)*20);
 	n->data=create_new_jugdata(pj1,pj2);
 	for(i=0;i<20;i++)
-	{
 		n->next[i]=NULL;
-	}
 	return n;
 }
 struct node *EmptyJug1(struct node *p)
@@ -149,30 +137,17 @@ struct node *EmptyJug1(struct node *p)
 	n=(struct node*)malloc(sizeof(struct node*)*20);
 	n->data=create_new_jugdata(pj1,pj2);
 	for(i=0;i<20;i++)
-	{
 		n->next[i]=NULL;
-	}
 	return n;
-}
-void displaynode(struct node *p)
-{
-	printf("\n\n%d .....%d",p->data->jug1,p->data->jug2);
 }
 int main()
 {
-	int c,i;
+	int c,i,ctr=0;
 	start=NULL;
 	rear=NULL;
-	struct node *ptr,*init;
+	struct node *ptr,*init,*root;
 	struct jugdata *ju;
-	struct queuenode *q,*q1;
-	/*for(c=0;c<5;c++)                 TEST SUCCESS
-	{
-	ptr=create_new_node(c,c);
-	q=create_new_queuenode(ptr);
-	insert_in_queue(q);
-	}
-	display(start);*/ 
+	struct queuenode *q;
 	printf("Jug1:- ");
 	scanf("%d",&ju1);
 	printf("Jug2:- ");
@@ -180,6 +155,7 @@ int main()
 	printf("Required:- ");
 	scanf("%d",&req);
 	init=create_new_node(0,0);
+	root=create_new_node(0,0);
 	q=create_new_queuenode(init);
 	insert_in_queue(q);
 	ptr=Fill_Jug1(init);
@@ -188,33 +164,65 @@ int main()
 	insert_in_queue(q);
 	ptr=Fill_Jug2(init);
 	init->next[1]=ptr;
-	//displaytree(init);
 	q=create_new_queuenode(init->next[1]);
 	insert_in_queue(q);
-	//display(start);
-	init=init->next[1];
-	ptr=TransferFromJug2ToJug1();
-	//displaynode(ptr);
+	root=init;
+	init=root->next[0];
+	ptr=TransferFromJug1ToJug2(init);
 	init->next[0]=ptr;
 	q=create_new_queuenode(init->next[0]);
 	insert_in_queue(q);
-	//free(ptr);
-	//ptr=create_new_node(0,0);
-	//displaynode(ptr);
-	ptr=Fill_Jug1(init);
+	ptr=Fill_Jug2(init);
 	init->next[1]=ptr;
 	q=create_new_queuenode(init->next[1]);
 	insert_in_queue(q);
 	init=init->next[0];
-	ptr=EmptyJug1(init);
+	while(1)
+	{
+		if(init->data->jug2==j2)
+			ptr=EmptyJug2(init);
+		else if(init->data->jug1==0)
+			ptr=Fill_Jug1(init);
+		else
+			ptr=TransferFromJug1ToJug2(init);
+		if(ptr->data->jug1==root->data->jug1 && ptr->data->jug2==root->data->jug2)
+			break;
+		else
+		{
+			init->next[0]=ptr;
+			q=create_new_queuenode(init->next[0]);
+			insert_in_queue(q);
+			init=init->next[0];
+		}
+	}
+	init=root->next[1];  //..................
+	ptr=TransferFromJug2ToJug1(init);
 	init->next[0]=ptr;
 	q=create_new_queuenode(init->next[0]);
 	insert_in_queue(q);
-	ptr=TransferFromJug2ToJug1();
-	init->next[0]=ptr;
-	q=create_new_queuenode(init->next[0]);
+	ptr=Fill_Jug1(init);
+	init->next[1]=ptr;
+	q=create_new_queuenode(init->next[1]);
 	insert_in_queue(q);
-	//displaytree(init);
+	init=init->next[0];	
+	while(1)
+	{
+		if(init->data->jug1==ju1)
+			ptr=EmptyJug1(init);
+		else if(init->data->jug2==0)
+			ptr=Fill_Jug2(init);
+		else
+			ptr=TransferFromJug2ToJug1(init);
+		if(ptr->data->jug1==root->data->jug1 && ptr->data->jug2==root->data->jug2)
+			break;
+		else
+		{
+		init->next[0]=ptr;
+		q=create_new_queuenode(init->next[0]);
+		insert_in_queue(q);
+		init=init->next[0];
+		}
+	}
 	display(start);
 	return 0;
 }
