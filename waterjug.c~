@@ -15,7 +15,7 @@ struct queuenode
 {
 	struct node *n1;
 	struct queuenode *link;
-}*start,*rear,*l;
+}*start,*rear,*l,*start1,*rear1;
 struct jugdata* create_new_jugdata(int x, int y)
 {
 	p=(struct jugdata *)malloc(sizeof(struct jugdata*));
@@ -118,9 +118,13 @@ struct node *EmptyJug1(struct node *p)
 	n=create_new_node(pj1,pj2);
 	return n;
 }
+void bfs()
+{
+	printf("%d %d",start->n1->data->jug1,start->n1->data->jug2);
+}
 int main()
 {
-	int c,i,ctr=0;
+	int c,i;
 	start=NULL;
 	rear=NULL;
 	struct node *ptr,*init,*root;
@@ -191,5 +195,6 @@ int main()
 		}
 	}
 	display(start);
+	bfs();
 	return 0;
 }
