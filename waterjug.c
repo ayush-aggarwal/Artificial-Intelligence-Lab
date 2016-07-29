@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<malloc.h>
-int ju1=4,j2=3,req=0,pj1=0,pj2=0;
+int ju1=4,j2=3,req=0,pj1=0,pj2=0,reqjug=1;
 struct jugdata
 {
 	int jug1;
@@ -118,9 +118,45 @@ struct node *EmptyJug1(struct node *p)
 	n=create_new_node(pj1,pj2);
 	return n;
 }
-void bfs()
+struct node *dequeue()
 {
-	printf("%d %d",start->n1->data->jug1,start->n1->data->jug2);
+	struct queuenode *p=start;
+	start=start->link;
+	return p->n1;
+}
+void bfs(struct node *rt,int req,int reqjug)
+{
+	struct node *tempnode=rt;
+	int a=1;
+	struct queuenode *q2;
+	while(1)
+	{
+		printf("%d--%d->",tempnode->data->jug1,tempnode->data->jug2);
+		if(tempnode->next[0])
+			create_new_queuenode(tempnode->next[0]);
+		if(tempnode->next[1])
+			create_new_queuenode(tempnode->next[1]);
+		tempnode=dequeue();
+		a=a+1;
+		switch(reqjug)
+		{
+			case 1:	
+					if(tempnode->data->jug1==req && tempnode->data->jug2==0)
+						printf("\nSolution Found in %d steps\n",a);
+					break;
+			case 2:
+					if(tempnode->data->jug1==0 && tempnode->data->jug2==req)
+						printf("\nSolution Found in %d steps\n",a);
+					break;
+		}
+		if(rear->n1==tempnode)
+		{
+			printf("%d--%d->",rear->n1->data->jug1,rear->n1->data->jug2);
+			a=a+1;
+			break;
+		}
+	}
+	printf("%d",a);
 }
 int main()
 {
@@ -134,6 +170,8 @@ int main()
 	scanf("%d",&j2);
 	printf("Required:- ");
 	scanf("%d",&req);
+	printf("Requirement Jug:- ");
+	scanf("%d",&reqjug);
 	init=create_new_node(0,0);
 	root=create_new_node(0,0);
 	create_new_queuenode(init);
@@ -194,7 +232,7 @@ int main()
 		init=init->next[0];
 		}
 	}
-	display(start);
-	bfs();
+	start=NULL;
+	bfs(root,req,reqjug);
 	return 0;
 }
