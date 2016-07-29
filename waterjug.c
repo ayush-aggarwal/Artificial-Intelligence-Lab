@@ -156,7 +156,6 @@ void bfs(struct node *rt,int req,int reqjug)
 			break;
 		}
 	}
-	printf("%d",a);
 }
 int main()
 {
@@ -174,21 +173,16 @@ int main()
 	scanf("%d",&reqjug);
 	init=create_new_node(0,0);
 	root=create_new_node(0,0);
-	create_new_queuenode(init);
 	ptr=Fill_Jug1(init);
 	init->next[0]=ptr;
-	create_new_queuenode(init->next[0]);
 	ptr=Fill_Jug2(init);
 	init->next[1]=ptr;
-	create_new_queuenode(init->next[1]);
 	root=init;
 	init=root->next[0];
 	ptr=TransferFromJug1ToJug2(init);
 	init->next[0]=ptr;
-	create_new_queuenode(init->next[0]);
 	ptr=Fill_Jug2(init);
 	init->next[1]=ptr;
-	create_new_queuenode(init->next[1]);
 	init=init->next[0];
 	while(1)
 	{
@@ -203,17 +197,14 @@ int main()
 		else
 		{
 			init->next[0]=ptr;
-			create_new_queuenode(init->next[0]);
 			init=init->next[0];
 		}
 	}
-	init=root->next[1];  //......................
+	init=root->next[1]; 
 	ptr=TransferFromJug2ToJug1(init);
 	init->next[0]=ptr;
-	create_new_queuenode(init->next[0]);
 	ptr=Fill_Jug1(init);
 	init->next[1]=ptr;
-	create_new_queuenode(init->next[1]);
 	init=init->next[0];	
 	while(1)
 	{
@@ -228,11 +219,9 @@ int main()
 		else
 		{
 		init->next[0]=ptr;
-		create_new_queuenode(init->next[0]);
 		init=init->next[0];
 		}
 	}
-	start=NULL;
 	bfs(root,req,reqjug);
 	return 0;
 }
