@@ -15,7 +15,7 @@ struct queuenode
 {
 	struct node *n1;
 	struct queuenode *link;
-}*start,*rear,*l,*start1,*rear1;
+}*start,*rear,*l;
 struct jugdata* create_new_jugdata(int x, int y)
 {
 	p=(struct jugdata *)malloc(sizeof(struct jugdata*));

@@ -49,15 +49,6 @@ void create_new_queuenode(struct node *ptr)
 	l->link=NULL;
 	insert_in_queue(l);
 }
-void display(struct queuenode *s)
-{
-	while(s!=NULL)
-	{
-		printf("%d - %d ->",s->n1->data->jug1,s->n1->data->jug2);
-		s=s->link;
-	}
-}
-
 struct node* Fill_Jug1(struct node *p)
 {
 	n=create_new_node(ju1,p->data->jug2);
