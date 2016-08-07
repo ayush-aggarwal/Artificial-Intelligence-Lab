@@ -49,8 +49,44 @@ void display()
 				printf("%d\t",t->ptr->puzzle[i][j]);
 			printf("\n");
 		}
+		printf("----------->\n");
 		t=t->next;
 	}
+}
+void findpos(struct node1 *temp)
+{
+	int a,b,c,flag=0;
+	for(i=0;i<3;i++)
+	{
+		for(j=0;j<3;j++)
+		{
+			if(temp->ptr->puzzle[i][j]==0)
+			{
+				flag=1;
+				a=i;
+				b=j;
+				break;
+			}
+		}
+		if(flag==1)
+			break;
+	}
+	//printf("%d--%d",i,j);
+	a=i-1;
+	if(a>=0)
+	{
+		temp->ptr->puzzle[i][j]=temp->ptr->puzzle[a][b];
+		temp->ptr->puzzle[a][b]=0;
+		n1=create_new_node1(temp->ptr);
+		insert(n1);
+		display();
+	}
+}
+void pop()
+{
+	struct node1 *p=start;
+	//start=start->next;
+	findpos(p);
 }
 void main()
 {
@@ -63,5 +99,5 @@ void main()
 	insert(s);
 	printf("\nEnter Goal State:- \n");
 	goal=create_new_node();
-	display();
+	pop();
 }
