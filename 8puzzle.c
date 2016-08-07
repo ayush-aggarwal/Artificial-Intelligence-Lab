@@ -11,12 +11,12 @@ struct node1
 	struct node *ptr;
 	struct node1 *next;
 }*n1,*start,*rear;
-struct node *create_new_node()
+struct node *create_new_node(int arr[][3])
 {
 	t1=(struct node *)malloc(sizeof(struct node *)*48);
 	for(i=0;i<3;i++)
 		for(j=0;j<3;j++)
-			scanf("%d",&t1->puzzle[i][j]);
+			t1->puzzle[i][j]=arr[i][j];
 	for(i=0;i<40;i++)
 		t1->link[i]=NULL;
 	return t1;
@@ -53,18 +53,22 @@ void display()
 		t=t->next;
 	}
 }
-void findpos(struct node1 *temp)
+void findpos(struct node *temp)
 {
-	int a,b,c,flag=0;
+	int a,b,k,l,pos1,pos2,arr1[3][3],flag=0,ptrcount=0;
+	struct node *te1;
+	struct node1 *te2;
 	for(i=0;i<3;i++)
 	{
 		for(j=0;j<3;j++)
 		{
-			if(temp->ptr->puzzle[i][j]==0)
+			if(temp->puzzle[i][j]==0)
 			{
 				flag=1;
 				a=i;
 				b=j;
+				pos1=i;
+				pos2=i;
 				break;
 			}
 		}
@@ -72,32 +76,91 @@ void findpos(struct node1 *temp)
 			break;
 	}
 	//printf("%d--%d",i,j);
-	a=i-1;
+	a=pos1-1;
 	if(a>=0)
 	{
-		temp->ptr->puzzle[i][j]=temp->ptr->puzzle[a][b];
-		temp->ptr->puzzle[a][b]=0;
-		n1=create_new_node1(temp->ptr);
-		insert(n1);
-		display();
+		for(k=0;k<3;k++)
+			for(l=0;l<3;l++)
+				arr1[k][l]=temp->puzzle[k][l];
+		arr1[pos1][pos2]=arr1[a][b];
+		arr1[a][b]=0;
+		te1=create_new_node(arr1);
+		temp->link[ptrcount]=te1;
+		ptrcount=ptrcount+1;
+		te2=create_new_node1(te1);
+		insert(te2);
 	}
+	a=pos1+1;
+	if(a<=2)
+	{
+		for(k=0;k<3;k++)
+			for(l=0;l<3;l++)
+				arr1[k][l]=temp->puzzle[k][l];
+		arr1[pos1][pos2]=arr1[a][b];
+		arr1[a][b]=0;
+		te1=create_new_node(arr1);
+		temp->link[ptrcount]=te1;
+		ptrcount=ptrcount+1;
+		te2=create_new_node1(te1);
+		insert(te2);
+	}
+	a=pos1;
+	b=pos2+1;
+	if(b<=2)
+	{
+		for(k=0;k<3;k++)
+			for(l=0;l<3;l++)
+				arr1[k][l]=temp->puzzle[k][l];
+		arr1[pos1][pos2]=arr1[a][b];
+		arr1[a][b]=0;
+		te1=create_new_node(arr1);
+		temp->link[ptrcount]=te1;
+		ptrcount=ptrcount+1;
+		te2=create_new_node1(te1);
+		insert(te2);
+	}
+	b=pos2-1;
+	if(b>=0)
+	{
+		for(k=0;k<3;k++)
+			for(l=0;l<3;l++)
+				arr1[k][l]=temp->puzzle[k][l];
+		arr1[pos1][pos2]=arr1[a][b];
+		arr1[a][b]=0;
+		te1=create_new_node(arr1);
+		temp->link[ptrcount]=te1;
+		ptrcount=ptrcount+1;
+		te2=create_new_node1(te1);
+		insert(te2);
+	}
+	display();
 }
 void pop()
 {
 	struct node1 *p=start;
 	//start=start->next;
-	findpos(p);
+	findpos(p->ptr);
 }
+
 void main()
 {
+	int arr[3][3];
 	start=rear=NULL;
 	struct node *initial, *goal;
 	struct node1 *s;
 	printf("\nEnter Initial State:- \n");
-	initial=create_new_node();
+	for(i=0;i<3;i++)
+		for(j=0;j<3;j++)
+			scanf("%d",&arr[i][j]);
+	initial=create_new_node(arr);
 	s=create_new_node1(initial);
 	insert(s);
-	printf("\nEnter Goal State:- \n");
-	goal=create_new_node();
+	display();
+	printf("\n\nhere\n\n");
+	/*printf("\nEnter Goal State:- \n");
+	for(i=0;i<3;i++)
+		for(j=0;j<3;j++)
+			scanf("%d",&arr[i][j]);
+	goal=create_new_node(arr);*/
 	pop();
 }
