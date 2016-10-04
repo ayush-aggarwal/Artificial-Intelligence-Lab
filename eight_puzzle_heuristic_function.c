@@ -9,6 +9,11 @@ struct node
 	struct node *thirdChild;
 	struct node *fourthChild;
 }*start,*final;
+struct queuenode
+{
+	struct node *puzzleNode;
+	struct queuenode *next;
+}*front , *rear, *currentProcessedNode;
 struct node * createNewNode(int puzzle[][3]){
 	int i,j;
 	struct node *newNode = (struct node *)malloc(sizeof(struct node *)*48);
@@ -24,6 +29,12 @@ struct node * createNewNode(int puzzle[][3]){
 	newNode -> fourthChild  = NULL;
 	return newNode;
 }
+struct queuenode * createNewQueueNode(struct node *currentNode){
+	struct queuenode *newQueueNode = (struct queuenode*)malloc(sizeof(struct queuenode*));
+	newQueueNode -> puzzleNode = currentNode;
+	newQueueNode -> next = NULL;
+	return newQueueNode;
+}
 void insertChildNode(struct node *currentNode, struct node *ChildNode){
 	if(currentNode -> firstChild == NULL){
 		currentNode -> firstChild = ChildNode;
@@ -38,6 +49,15 @@ void insertChildNode(struct node *currentNode, struct node *ChildNode){
 		currentNode -> fourthChild = ChildNode;
 	}
 }
+void insertQueueNodeInQueue(struct queuenode *currentQueueNode){
+	if(front == NULL){
+		front = rear = currentQueueNode;
+	}
+	else{
+		rear -> next = currentQueueNode;
+		rear = currentQueueNode;
+	}
+}
 void insertHeuristic(struct node *childNode){
 	int heuristicCount = 0;
 	int i,j;
@@ -50,13 +70,60 @@ void insertHeuristic(struct node *childNode){
 	}
 	childNode -> heuristic = heuristicCount;
 }
-struct node * createChildNode(struct node *currentNode){
+int checkInQueue(struct node *currentNode){
+	struct queuenode *traverseNode = front;
+	int i,j, flag;
+	while(traverseNode != NULL){
+		flag = 0;
+		for(i = 0; i < 3; i++){
+			for(j = 0; j < 3; j++){
+				if(traverseNode -> puzzleNode -> puzzle[i][j] != currentNode -> puzzle[i][j]){
+					flag = 1;
+					break;
+				}
+			}
+			if(flag == 1){
+				break;
+			}
+		}
+		if(flag == 1){
+			traverseNode = traverseNode -> next;
+			continue;
+		}
+		else{
+			return 0;
+		}
+	}
+	return 1;
+}
+int checkFinalWin(struct node *currentNode){
+	int i,j;
+	for(i = 0; i<3 ;i++){
+		for(j = 0; j<3 ; j++){
+			if(currentNode -> puzzle[i][j] != final -> puzzle[i][j]){
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+void displayNode(struct node *currentNode){
+	int i,j;
+	for(i = 0; i<3; i++){
+		for(j = 0; j<3; j++){
+			printf("%d\t",currentNode -> puzzle[i][j]);
+		}
+		printf("\n");
+	}
+	printf("----------------------\n");
+}
+void createChildNode(struct node *currentNode, int counter){
 	//find position of 0 in array
 	int i,j,k,l,m,n,swapInteger, chooseHeuristic = 9;
 	int f = 0;
 	int tempPuzzle[3][3];
 	struct node *ChildNode;
-	struct node *selectedChildNode;
+	struct node *selectedChildNode = NULL;
 	for(i = 0; i<3 ;i++){
 		for(j = 0; j<3 ; j++){
 			if(currentNode -> puzzle[i][j] == 0){
@@ -84,9 +151,11 @@ struct node * createChildNode(struct node *currentNode){
 		ChildNode = createNewNode(tempPuzzle);
 		insertChildNode(currentNode,ChildNode);
 		insertHeuristic(ChildNode);
-		if(ChildNode -> heuristic <= chooseHeuristic){
-			chooseHeuristic = ChildNode -> heuristic;
-			selectedChildNode = ChildNode;
+		if(checkInQueue(ChildNode)){
+			if(ChildNode -> heuristic <= chooseHeuristic){
+				chooseHeuristic = ChildNode -> heuristic;
+				selectedChildNode = ChildNode;
+			}
 		}
 	}
 	// copy the current node puzzle into tempPuzzle;
@@ -103,9 +172,11 @@ struct node * createChildNode(struct node *currentNode){
 		ChildNode = createNewNode(tempPuzzle);
 		insertChildNode(currentNode,ChildNode);
 		insertHeuristic(ChildNode);
-		if(ChildNode -> heuristic <= chooseHeuristic){
-			chooseHeuristic = ChildNode -> heuristic;
-			selectedChildNode = ChildNode;
+		if(checkInQueue(ChildNode)){
+			if(ChildNode -> heuristic <= chooseHeuristic){
+				chooseHeuristic = ChildNode -> heuristic;
+				selectedChildNode = ChildNode;
+			}
 		}
 	}
 	// copy the current node puzzle into tempPuzzle;
@@ -123,9 +194,11 @@ struct node * createChildNode(struct node *currentNode){
 		ChildNode = createNewNode(tempPuzzle);
 		insertChildNode(currentNode,ChildNode);
 		insertHeuristic(ChildNode);
-		if(ChildNode -> heuristic <= chooseHeuristic){
-			chooseHeuristic = ChildNode -> heuristic;
-			selectedChildNode = ChildNode;
+		if(checkInQueue(ChildNode)){
+			if(ChildNode -> heuristic <= chooseHeuristic){
+				chooseHeuristic = ChildNode -> heuristic;
+				selectedChildNode = ChildNode;
+			}
 		}
 	}
 	// copy the current node puzzle into tempPuzzle;
@@ -142,23 +215,30 @@ struct node * createChildNode(struct node *currentNode){
 		ChildNode = createNewNode(tempPuzzle);
 		insertChildNode(currentNode,ChildNode);
 		insertHeuristic(ChildNode);
-		if(ChildNode -> heuristic <= chooseHeuristic){
-			chooseHeuristic = ChildNode -> heuristic;
-			selectedChildNode = ChildNode;
+		if(checkInQueue(ChildNode)){
+			if(ChildNode -> heuristic <= chooseHeuristic){
+				chooseHeuristic = ChildNode -> heuristic;
+				selectedChildNode = ChildNode;
+			}
 		}
 	}
-	//check in queue whether this node is not visited
-	//call recursively this function to achieve the goal state
-	// for(m=0;m<3;m++){
-	// 	for(n=0;n<3;n++){
-	// 		printf("%d\t",currentNode->secondChild->puzzle[m][n]);
-	// 	}
-	// 	printf("\n");
-	// }
+	currentProcessedNode = createNewQueueNode(selectedChildNode);
+	insertQueueNodeInQueue(currentProcessedNode);
+	displayNode(selectedChildNode);
+	if(checkFinalWin(selectedChildNode)){
+		printf("Solution Found in %d steps.....Hence Terminating\n",counter);
+	}
+	else{
+		counter = counter + 1;
+		createChildNode(selectedChildNode , counter);
+	}
 }
 int main(){
 	int i,j;
+	int counter = 0;
 	int puzzleArray[3][3];
+	front = rear = NULL;
+	struct queuenode *queue = NULL;
 	printf("Please Enter Initial State\n");
 	for(i = 0; i<3; i++){
 		for(j = 0; j<3; j++){
@@ -166,6 +246,8 @@ int main(){
 		}
 	}
 	start = createNewNode(puzzleArray);
+	queue = createNewQueueNode(start);
+	insertQueueNodeInQueue(queue);
 	printf("Please Enter Final State\n");
 	for(i = 0; i<3; i++){
 		for(j = 0; j<3; j++){
@@ -174,6 +256,7 @@ int main(){
 	}
 	final = createNewNode(puzzleArray);
 	insertHeuristic(start);
-	createChildNode(start);
+	displayNode(start);
+	createChildNode(start, counter);
 	return 0;
 }
